@@ -1,0 +1,5 @@
+# https://geraintluff.github.io/SUPPORT.txt/
+
+# This is still pretty experimental, so this is pretty short until I'm convinced it's actually a good long-term approach to the problem
+
+2026-01-01 Geraint <geraint@signalsmith-audio.co.uk>

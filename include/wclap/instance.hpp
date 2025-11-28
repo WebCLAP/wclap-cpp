@@ -18,7 +18,7 @@ class Instance {
 
 public:
 	template<class... Args>
-	Instance(Args &&...args) : impl(std::forward<Args>(args)...) {
+	Instance(Args &&...args) : impl(this, std::forward<Args>(args)...) {
 		impl.threadSpawnContext = this;
 		impl.threadSpawn = threadSpawnImpl;
 	}

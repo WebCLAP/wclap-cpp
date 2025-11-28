@@ -16,6 +16,7 @@ struct MemoryArena {
 	using Pointer = std::conditional_t<is64, wclap64::Pointer<V>, wclap32::Pointer<V>>;
 
 	bool ok = false;
+	MemoryArena() {}
 	
 	MemoryArena(Instance *instance, Size size=16384) : instance(instance) {
 		if (is64) {
@@ -65,9 +66,9 @@ struct MemoryArena {
 	}
 	
 private:
-	Size start, end;
-	Size cleanStart;
-	Instance *instance;
+	Size start = 0, end = 0;
+	Size cleanStart = 0;
+	Instance *instance = nullptr;
 };
 
 template<class Instance, bool is64>

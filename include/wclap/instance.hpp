@@ -92,6 +92,10 @@ public:
 		// Strongly matches on the function args, but then implicitly converts here
 		return impl.template call<Return, Args...>(fnPtr, args...);
 	}
+	template<class Return, class... Args, class... CArgs>
+	Return call(wclap32::Pointer<wclap32::Function<Return, Args...>> fnPtrPtr, CArgs... args) {
+		return impl.template callAt<Return, Args...>(fnPtrPtr, args...);
+	}
 
 	template<class Return, class ...Args>
 	wclap32::Function<Return, Args...> registerHost32(void *context, Return (*fn)(void *, Args...)) {

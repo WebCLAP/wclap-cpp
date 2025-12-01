@@ -50,6 +50,13 @@ struct MemoryArena {
 			std::unique_ptr<MemoryArena> ptr = std::move(borrowedArena);
 			return ptr;
 		}
+		
+		template<class T>
+		Pointer<T> array(size_t length) {
+			Pointer<T> ptr{arena.start};
+			arena.start += length*sizeof(T);
+			return ptr;
+		}
 
 		Pointer<const char> writeString(const char *str) {
 			Pointer<char> remoteStr{arena.start};

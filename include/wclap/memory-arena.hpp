@@ -45,7 +45,11 @@ struct MemoryArena {
 			}
 		}
 		Scoped(const Scoped &other) = delete;
-		
+
+		void reset() {
+			arena.start = restoreStart;
+		}
+
 		std::unique_ptr<MemoryArena> commit() {
 			restoreStart = arena.start;
 			std::unique_ptr<MemoryArena> ptr = std::move(borrowedArena);
@@ -78,14 +82,14 @@ struct MemoryArena {
 			arena.instance->set(ptr, v);
 			return ptr;
 		}
-		
+				
 	private:
 		friend struct MemoryArena;
 		friend struct MemoryArenaPool<Instance, is64>;
 		MemoryArena &arena;
-		std::unique_ptr<MemoryArena> borrowedArena;
 		Size restoreStart;
-		std::lock_guard<std::recursive_mutex> arenaLock;
+		std::unique_ptr<MemoryArena> borrowedArena;
+		std::scoped_lock<std::recursive_mutex> arenaLock;
 		
 		Scoped(MemoryArena &arena, std::unique_ptr<MemoryArena> borrowedArena) : arena(arena), borrowedArena(std::move(borrowedArena)), restoreStart(arena.start), arenaLock(arena.scopeMutex) {}
 	};

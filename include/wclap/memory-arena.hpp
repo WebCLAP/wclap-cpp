@@ -55,30 +55,29 @@ struct MemoryArena {
 			std::unique_ptr<MemoryArena> ptr = std::move(borrowedArena);
 			return ptr;
 		}
-		
-		template<class T>
-		Pointer<T> array(size_t length) {
-			Pointer<T> ptr{arena.start};
-			arena.start += length*sizeof(T);
+
+		Pointer<void> reserve(size_t length, size_t align) {
+			while (arena.start%align) ++arena.start;
+			Pointer<void> ptr{arena.start};
+			arena.start += length;
+			if (arena.start > arena.end) return {0}; // TODO: grow arena
 			return ptr;
 		}
 
+		template<class T>
+		Pointer<T> array(size_t length) {
+			return reserve(length*sizeof(T), alignof(T)).template cast<T>();
+		}
+
 		Pointer<const char> writeString(const char *str) {
-			Pointer<char> remoteStr{arena.start};
-
-			auto length = std::strlen(str);
-			arena.start += length + 1;
-			if (arena.start > arena.end) return {0}; // TODO: grow arena
-			arena.instance->setArray(remoteStr, str, length + 1/* includes null-terminator*/);
-
+			auto length = std::strlen(str) + 1; // includes null-terminator
+			auto remoteStr = array<char>(length);
+			arena.instance->setArray(remoteStr, str, length);
 			return remoteStr;
 		}
 		template<class V>
 		Pointer<V> copyAcross(const V &v) {
-			while (arena.start%alignof(V)) ++arena.start;
-			Pointer<V> ptr{arena.start};
-			arena.start += sizeof(V);
-			if (arena.start > arena.end) return {0}; // TODO: grow arena
+			auto ptr = reserve(sizeof(V), alignof(V)).template cast<V>();
 			arena.instance->set(ptr, v);
 			return ptr;
 		}

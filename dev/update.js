@@ -32,6 +32,8 @@ function addCode(code, toConstants) {
 	code = code.replace(/([^a-zA-Z0-9_])CLAP_/g, "$1WCLAP_");
 	// remove `_t` suffix from WCLAP types
 	code = code.replace(/((\s+|\(|\*)wclap_[a-zA-Z0-9_]+)_t([^a-zA-Z0-9_])/g, "$1$3");
+	// but this one causes a naming clash
+	code = code.replace(/wclap_version wclap_version;/g, "wclap_version clap_version;");
 	
 	// Replace all value pointers with a `Pointer<>` template
 	let prevCode;

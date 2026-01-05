@@ -25,7 +25,7 @@ wclap_version_is_compatible(const wclap_version v) {
 //---------- entry.h
 
 typedef struct wclap_plugin_entry {
-   wclap_version wclap_version;
+   wclap_version clap_version;
    Function<bool, Pointer<const char>> init;
    Function<void> deinit;
    Function<Pointer<const void>, Pointer<const char>> get_factory;
@@ -35,7 +35,7 @@ WCLAP_EXPORT extern const wclap_plugin_entry wclap_entry;
 //---------- host.h
 
 typedef struct wclap_host {
-   wclap_version wclap_version;
+   wclap_version clap_version;
    Pointer<void> host_data;
    Pointer<const char> name;
    Pointer<const char> vendor;
@@ -229,7 +229,7 @@ typedef struct wclap_process {
 //---------- plugin.h
 
 typedef struct wclap_plugin_descriptor {
-   wclap_version wclap_version;
+   wclap_version clap_version;
    Pointer<const char> id;
    Pointer<const char> name;
    Pointer<const char> vendor;
@@ -327,7 +327,7 @@ typedef struct wclap_preset_discovery_soundpack {
    wclap_timestamp release_timestamp;
 } wclap_preset_discovery_soundpack;
 typedef struct wclap_preset_discovery_provider_descriptor {
-   wclap_version wclap_version;
+   wclap_version clap_version;
    Pointer<const char> id;
    Pointer<const char> name;
    Pointer<const char> vendor;
@@ -341,7 +341,7 @@ typedef struct wclap_preset_discovery_provider {
    Function<Pointer<const void>, Pointer<const struct wclap_preset_discovery_provider>, Pointer<const char>> get_extension;
 } wclap_preset_discovery_provider;
 typedef struct wclap_preset_discovery_indexer {
-   wclap_version wclap_version;
+   wclap_version clap_version;
    Pointer<const char> name;
    Pointer<const char> vendor;
    Pointer<const char> url;
@@ -1000,7 +1000,7 @@ typedef struct wclap_plugin_invalidation_factory {
 //---------- factory/draft/plugin-state-converter.h
 
 typedef struct wclap_plugin_state_converter_descriptor {
-   wclap_version wclap_version;
+   wclap_version clap_version;
    wclap_universal_plugin_id src_plugin_id;
    wclap_universal_plugin_id dst_plugin_id;
    Pointer<const char> id;

@@ -44,6 +44,8 @@ struct MemoryArena {
 			}
 		}
 		Scoped(const Scoped &other) = delete;
+		
+		Instance &instance;
 
 		void reset() {
 			arena.start = restoreStart;
@@ -71,6 +73,12 @@ struct MemoryArena {
 			}
 			return ptr;
 		}
+		template<class V>
+		Pointer<V> reserveBlank() {
+			V v;
+			std::memset(&v, 0, sizeof(v)); // zero-initialize
+			return copyAcross<V>(v);
+		}
 
 		template<class T>
 		Pointer<T> array(size_t length) {
@@ -80,13 +88,13 @@ struct MemoryArena {
 		Pointer<const char> writeString(const char *str) {
 			auto length = std::strlen(str) + 1; // includes null-terminator
 			auto remoteStr = array<char>(length);
-			arena.instance->setArray(remoteStr, str, length);
+			instance.setArray(remoteStr, str, length);
 			return remoteStr;
 		}
 		template<class V>
 		Pointer<V> copyAcross(const V &v) {
 			auto ptr = reserve(sizeof(V), alignof(V)).template cast<V>();
-			arena.instance->set(ptr, v);
+			instance.set(ptr, v);
 			return ptr;
 		}
 				
@@ -98,7 +106,7 @@ struct MemoryArena {
 		std::unique_ptr<MemoryArena> borrowedArena;
 		std::scoped_lock<std::recursive_mutex> arenaLock;
 		
-		Scoped(MemoryArena &arena, std::unique_ptr<MemoryArena> borrowedArena) : arena(arena), borrowedArena(std::move(borrowedArena)), restoreStart(arena.start), arenaLock(arena.scopeMutex) {}
+		Scoped(MemoryArena &arena, std::unique_ptr<MemoryArena> borrowedArena) : instance(*arena.instance), arena(arena), borrowedArena(std::move(borrowedArena)), restoreStart(arena.start), arenaLock(arena.scopeMutex) {}
 	};
 	
 	Scoped scoped() {
